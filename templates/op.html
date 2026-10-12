@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Estimate · MediCost</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand: #FF6B00;
+      --brand-dark: #E25D00;
+      --brand-soft: #FFF1E6;
+      --brand-line: #FFD9BD;
+      --ink: #1B1A19;
+      --muted: #6B6560;
+      --bg: #FBF7F3;
+      --card: #FFFFFF;
+      --field: #FAF6F2;
+      --line: #EBE3DB;
+      --navy: #231A14;
+      --ok: #1E9E5A;
+      --warn: #D98200;
+      --bad: #D93B3B;
+      --shadow: 0 18px 50px rgba(60,30,0,.07);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ink: #F5F0EB; --muted: #A39B93; --bg: #14110F; --card: #1E1A17; --field: #26211D;
+        --line: #342E29; --brand-soft: #2E1D10; --brand-line: #5A3416; --navy: #0E0B09;
+        --shadow: 0 18px 50px rgba(0,0,0,.35);
+      }
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: inherit; }
+    .wrap { max-width: 1180px; width: 100%; margin: 0 auto; padding: 0 24px; }
+    :focus-visible { outline: 3px solid rgba(255,107,0,.45); outline-offset: 2px; border-radius: 6px; }
+
+    header.site { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid var(--line); }
+    header.site .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -.3px; text-decoration: none; }
+    .logo-mark { width: 36px; height: 36px; border-radius: 11px; color: #fff; display: grid; place-items: center; background: linear-gradient(135deg, #FF8A2B, var(--brand-dark)); box-shadow: 0 6px 16px rgba(255,107,0,.35); }
+    nav.main { display: flex; gap: 6px; }
+    nav.main a { text-decoration: none; font-size: 14px; font-weight: 600; color: var(--muted); padding: 9px 14px; border-radius: 10px; transition: .2s; }
+    nav.main a:hover { color: var(--ink); background: var(--brand-soft); }
+    .nav-cta { text-decoration: none; font-size: 14px; font-weight: 700; color: #fff; padding: 10px 18px; border-radius: 12px; background: linear-gradient(135deg, #FF8A2B, var(--brand-dark)); box-shadow: 0 8px 20px rgba(255,107,0,.3); transition: .2s; }
+    .nav-cta:hover { transform: translateY(-1px); }
+
+    .crumbs { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); padding: 26px 0 18px; }
+    .crumbs a { text-decoration: none; } .crumbs a:hover { color: var(--brand); }
+    .crumbs b { color: var(--ink); font-weight: 700; }
+
+    main { flex: 1; }
+    .layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 26px; align-items: start; padding-bottom: 20px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 26px; box-shadow: var(--shadow); }
+
+    /* Result hero */
+    .result { overflow: hidden; animation: rise .55s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    .banner { position: relative; overflow: hidden; color: #fff; padding: 40px 40px 42px; background: linear-gradient(150deg, #FF8A2B 0%, #FF6B00 50%, #D94F00 100%); display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+    .banner::before, .banner::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,.1); pointer-events: none; }
+    .banner::before { width: 300px; height: 300px; right: -90px; top: -120px; }
+    .banner::after { width: 200px; height: 200px; left: -80px; bottom: -110px; background: rgba(255,255,255,.07); }
+    .banner > * { position: relative; z-index: 1; }
+    .status { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.2); padding: 7px 12px; border-radius: 999px; }
+    .label { margin-top: 20px; font-size: 14px; font-weight: 600; opacity: .92; }
+    .amount { font-size: clamp(42px, 8vw, 68px); font-weight: 800; letter-spacing: -2.4px; line-height: 1.05; margin-top: 6px; word-break: break-word; }
+    .per { margin-top: 10px; font-size: 14.5px; font-weight: 500; opacity: .9; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+    .month { display: none; background: rgba(255,255,255,.2); padding: 5px 12px; border-radius: 999px; font-weight: 700; font-size: 13px; }
+    .month.show { display: inline-block; }
+    .banner-art { width: 190px; height: auto; }
+    .pop { animation: pop .6s .2s cubic-bezier(.3,1.5,.5,1) both; transform-origin: 50% 60%; }
+    @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .panel { padding: 28px 34px; border-top: 1px solid var(--line); }
+    .panel h3 { font-size: 17px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+    .panel > p.sub { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+
+    .factors { display: grid; gap: 12px; }
+    .factors:empty { display: none; }
+    .fact { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; background: var(--field); border: 1px solid var(--line); border-radius: 16px; }
+    .fact .ic { flex: none; width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
+    .fact.up .ic { background: rgba(217,59,59,.12); color: var(--bad); }
+    .fact.ok .ic { background: rgba(30,158,90,.14); color: var(--ok); }
+    .fact b { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 800; }
+    .fact span.tagline { font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; background: var(--brand-soft); color: var(--brand); }
+    .fact.up span.tagline { background: rgba(217,59,59,.12); color: var(--bad); }
+    .fact.ok span.tagline { background: rgba(30,158,90,.14); color: var(--ok); }
+    .fact p { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
+    .empty-note { display: none; font-size: 14px; color: var(--muted); }
+    .factors:empty + .empty-note { display: block; }
+
+    .note { display: flex; gap: 12px; align-items: flex-start; background: var(--brand-soft); border: 1px solid var(--brand-line); border-radius: 16px; padding: 14px 16px; font-size: 13.5px; color: var(--muted); }
+    .note svg { flex: none; color: var(--brand); margin-top: 2px; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer; padding: 14px 22px; border-radius: 14px; border: none; transition: transform .2s, box-shadow .2s, border-color .2s, color .2s; }
+    .btn-primary { color: #fff; background: linear-gradient(135deg, #FF8A2B, var(--brand-dark)); box-shadow: 0 10px 24px rgba(255,107,0,.35); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(255,107,0,.45); }
+    .btn-ghost { color: var(--ink); background: transparent; border: 1.5px solid var(--line); }
+    .btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
+
+    /* Sidebar */
+    .side { display: grid; gap: 18px; position: sticky; top: 90px; }
+    .side .card { padding: 24px; }
+    .side h4 { font-size: 15px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .edit { font-size: 12.5px; font-weight: 800; color: var(--brand); text-decoration: none; }
+    .edit:hover { text-decoration: underline; }
+    .profile { list-style: none; }
+    .profile li { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; padding: 9px 0; border-bottom: 1px dashed var(--line); }
+    .profile li:last-child { border-bottom: none; }
+    .profile span { color: var(--muted); font-weight: 500; } .profile b { font-weight: 700; text-align: right; }
+    .no-data { font-size: 13.5px; color: var(--muted); }
+    .next { background: linear-gradient(160deg, #2A1F18, #14100D); color: #F4EAE2; border: none !important; position: relative; overflow: hidden; }
+    .next h4 { color: #fff; }
+    .next p { font-size: 13.5px; color: #C8BBB0; margin-bottom: 14px; max-width: 200px; }
+    .next a { display: inline-block; font-size: 13px; font-weight: 800; text-decoration: none; color: #1B1A19; background: #FFB27A; padding: 9px 14px; border-radius: 10px; }
+    .next svg { position: absolute; right: -10px; bottom: -6px; width: 120px; height: auto; opacity: .95; }
+
+    .band { margin-top: 56px; }
+    footer.site { margin-top: 56px; background: var(--navy); color: #CFC4BA; padding: 34px 0 24px; }
+    footer .row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    footer .logo { color: #fff; }
+    footer .links { display: flex; gap: 22px; font-size: 14px; }
+    footer .links a { text-decoration: none; color: #A89C92; } footer .links a:hover { color: #FFB27A; }
+    .legal { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1); font-size: 12.5px; color: #8D8279; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+
+    .toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); background: var(--navy); color: #fff; font-size: 13.5px; font-weight: 700; padding: 11px 18px; border-radius: 12px; opacity: 0; pointer-events: none; transition: .25s; z-index: 80; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .side { position: static; grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      nav.main { display: none; }
+      .wrap { padding: 0 16px; }
+      .banner { grid-template-columns: 1fr; padding: 30px 22px 32px; }
+      .banner-art { width: 130px; order: -1; }
+      .panel { padding: 24px 20px; }
+      .side { grid-template-columns: 1fr; }
+      .actions .btn { flex: 1 1 100%; }
+    }
+    @media print {
+      header.site, footer.site, .crumbs, .actions, .next, .toast { display: none !important; }
+      body { background: #fff; } .card { box-shadow: none; }
+      .banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .layout { grid-template-columns: 1fr 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap">
+      <a href="/" class="logo" aria-label="MediCost home">
+        <span class="logo-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6l8-3z"/><path d="M12 8.5v5M9.5 11h5"/></svg></span>
+        MediCost
+      </a>
+      <nav class="main" aria-label="Primary">
+        <a href="/#estimate">Estimator</a>
+        <a href="/#how">How it works</a>
+        <a href="/#factors">Cost factors</a>
+        <a href="/#faq">FAQ</a>
+      </nav>
+      <a href="/#estimate" class="nav-cta">New estimate</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a><span>&rsaquo;</span><a href="/#estimate">Estimator</a><span>&rsaquo;</span><b>Your estimate</b>
+      </nav>
+
+      <div class="layout">
+        <section class="card result" aria-live="polite">
+          <div class="banner">
+            <div>
+              <span class="status">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                Estimate ready
+              </span>
+              <div class="label">Predicted amount</div>
+              <div class="amount" id="amount">{{ pred }}</div>
+              <div class="per">
+                <span>Estimated medical insurance cost</span>
+                <span class="month" id="month"></span>
+              </div>
+            </div>
+            <svg class="banner-art pop" viewBox="0 0 190 200" role="img" aria-label="Shield with a check mark">
+              <circle cx="95" cy="104" r="86" fill="#fff" opacity=".12"/>
+              <circle cx="95" cy="104" r="62" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2" stroke-dasharray="3 8" stroke-linecap="round"/>
+              <path d="M95 22l56 19v42c0 36-23 60-56 72-33-12-56-36-56-72V41l56-19z" fill="#fff"/>
+              <path d="M95 22l56 19v42c0 36-23 60-56 72z" fill="#FFE4D0"/>
+              <path d="M68 92l20 20 36-40" fill="none" stroke="#FF6B00" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+              <g transform="translate(144 24)"><circle r="13" fill="#1E9E5A"/><path d="M-5 0v0M0-6v12M-6 0h12" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>
+              <circle cx="30" cy="150" r="6" fill="#fff" opacity=".6"/><circle cx="168" cy="140" r="4" fill="#fff" opacity=".6"/>
+            </svg>
+          </div>
+
+          <div class="panel">
+            <h3>What shaped this estimate</h3>
+            <p class="sub">Based on the details you entered. These are general trends, not medical advice.</p>
+            <div class="factors" id="factors"></div>
+            <p class="empty-note">Enter your details again to see which inputs influenced the result.</p>
+          </div>
+
+          <div class="panel">
+            <div class="note">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v5h1"/></svg>
+              <span>This is a model-based estimate for guidance only. Actual premiums depend on the insurer, the plan and your full medical history.</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="actions">
+              <a href="/" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                Predict again
+              </a>
+              <button type="button" class="btn btn-ghost" id="copyBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+                Copy result
+              </button>
+              <button type="button" class="btn btn-ghost" onclick="window.print()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-6a2 2 0 012-2h12a2 2 0 012 2v6h-2"/><rect x="6" y="14" width="12" height="7" rx="1"/></svg>
+                Print
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="side" aria-label="Your inputs">
+          <div class="card">
+            <h4>Your inputs <a href="/" class="edit">Edit</a></h4>
+            <ul class="profile" id="profile"></ul>
+            <p class="no-data" id="noData">Your submitted details will appear here.</p>
+          </div>
+          <div class="card next">
+            <h4>Try a what-if</h4>
+            <p>Change one input, such as BMI or smoking status, and compare the result.</p>
+            <a href="/#estimate">Adjust inputs</a>
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <rect x="14" y="62" width="20" height="46" rx="6" fill="#FFB27A" opacity=".5"/>
+              <rect x="44" y="40" width="20" height="68" rx="6" fill="#FF8A2B" opacity=".75"/>
+              <rect x="74" y="18" width="20" height="90" rx="6" fill="#FF6B00"/>
+              <path d="M18 54l30-22 28-22" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7"/>
+            </svg>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <div class="row">
+        <a href="/" class="logo"><span class="logo-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6l8-3z"/><path d="M12 8.5v5M9.5 11h5"/></svg></span>MediCost</a>
+        <div class="links"><a href="/#estimate">Estimator</a><a href="/#how">How it works</a><a href="/#faq">FAQ</a></div>
+      </div>
+      <div class="legal">
+        <span>&copy; 2026 MediCost. Made with ❤️ for better healthcare decisions.</span>
+        <span>Educational project. Estimates are not insurance quotes or medical advice.</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status">Copied to clipboard</div>
+
+  <script>
+    (function () {
+      var $ = function (id) { return document.getElementById(id); };
+      var amountEl = $('amount');
+      var raw = (amountEl.textContent || '').trim();
+
+      // ---- Monthly equivalent + count-up (only when the value parses as a number) ----
+      var m = raw.match(/^([^0-9\-]*)(-?[0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/);
+      if (m) {
+        var prefix = m[1], suffix = m[3];
+        var num = parseFloat(m[2].replace(/,/g, ''));
+        var decimals = (m[2].split('.')[1] || '').length;
+        if (isFinite(num)) {
+          var fmt = function (v, d) { return v.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }); };
+          var monthEl = $('month');
+          monthEl.textContent = '≈ ' + prefix + fmt(num / 12, 0) + suffix + ' / month if paid yearly';
+          monthEl.classList.add('show');
+
+          var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (!reduce) {
+            var start = null, dur = 900;
+            var step = function (t) {
+              if (start === null) start = t;
+              var p = Math.min(1, (t - start) / dur);
+              var eased = 1 - Math.pow(1 - p, 3);
+              amountEl.textContent = prefix + fmt(num * eased, decimals) + suffix;
+              if (p < 1) requestAnimationFrame(step); else amountEl.textContent = raw;
+            };
+            requestAnimationFrame(step);
+          }
+        }
+      }
+
+      // ---- Copy ----
+      var toast = $('toast');
+      function say(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(function () { toast.classList.remove('show'); }, 1800); }
+      $('copyBtn').addEventListener('click', function () {
+        var text = 'MediCost estimate: ' + raw;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { say('Copied to clipboard'); }, function () { say('Copy failed'); });
+        } else { say('Copy not supported'); }
+      });
+
+      // ---- Inputs summary + factors (from the form's saved entries) ----
+      var d = null;
+      try { d = JSON.parse(sessionStorage.getItem('medicost:inputs') || 'null'); } catch (e) {}
+      if (!d) return;
+
+      var GENDER = { '0': 'Female', '1': 'Male' };
+      var SMOKE = { '0': 'No', '1': 'Yes' };
+      var REGION = { '0': 'Northeast', '1': 'Northwest', '2': 'Southeast', '3': 'Southwest' };
+      var bmiVal = parseFloat(d.bmi);
+      function bmiLabel(v) { return v < 18.5 ? 'Underweight' : v < 25 ? 'Healthy range' : v < 30 ? 'Overweight' : 'Obese range'; }
+
+      var rows = [
+        ['Age', d.age ? d.age + ' yrs' : ''],
+        ['Gender', GENDER[d.gender] || ''],
+        ['BMI', isNaN(bmiVal) ? '' : bmiVal.toFixed(1) + ' · ' + bmiLabel(bmiVal)],
+        ['Children', d.children],
+        ['Smoker', SMOKE[d.smoker] || ''],
+        ['Region', REGION[d.region] || '']
+      ].filter(function (r) { return r[1] !== '' && r[1] != null; });
+
+      if (rows.length) {
+        var ul = $('profile');
+        rows.forEach(function (r) {
+          var li = document.createElement('li');
+          var a = document.createElement('span'); a.textContent = r[0];
+          var b = document.createElement('b'); b.textContent = r[1];
+          li.appendChild(a); li.appendChild(b); ul.appendChild(li);
+        });
+        $('noData').style.display = 'none';
+      }
+
+      var ICONS = {
+        smoke: '<path d="M3 15h13v4H3zM19 15v4M22 15v4M17 4c2 1.5 2 4-.5 6"/>',
+        bmi: '<path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 006 0L7 7zM17 7l-3 7a3 3 0 006 0l-3-7z"/>',
+        age: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        heart: '<path d="M12 21s-7-5.2-7-11a4 4 0 017-2.6A4 4 0 0119 10c0 5.8-7 11-7 11z"/>'
+      };
+      var facts = [];
+      if (d.smoker === '1') facts.push(['up', 'smoke', 'Smoking status', 'Often raises cost', 'Smoking is frequently one of the strongest drivers of higher predicted cost in insurance data.']);
+      else if (d.smoker === '0') facts.push(['ok', 'smoke', 'Non-smoker', 'Often lowers cost', 'Not smoking usually keeps the predicted cost noticeably lower than for smokers.']);
+      if (!isNaN(bmiVal)) {
+        if (bmiVal >= 30) facts.push(['up', 'bmi', 'BMI ' + bmiVal.toFixed(1), 'Often raises cost', 'A BMI in the obese range tends to push predicted cost upward.']);
+        else if (bmiVal >= 18.5 && bmiVal < 25) facts.push(['ok', 'bmi', 'BMI ' + bmiVal.toFixed(1), 'Neutral to lower', 'A BMI in the healthy range generally has little upward effect on the estimate.']);
+        else facts.push(['', 'bmi', 'BMI ' + bmiVal.toFixed(1), 'Moderate effect', 'This BMI sits outside the healthy range, which can nudge the estimate slightly.']);
+      }
+      var ageNum = parseInt(d.age, 10);
+      if (!isNaN(ageNum)) {
+        if (ageNum >= 45) facts.push(['up', 'age', 'Age ' + ageNum, 'Often raises cost', 'Predicted cost generally increases with age as medical needs grow.']);
+        else facts.push(['ok', 'age', 'Age ' + ageNum, 'Neutral to lower', 'Younger adults typically see lower predicted costs than older age groups.']);
+      }
+      var kidsNum = parseInt(d.children, 10);
+      if (!isNaN(kidsNum) && kidsNum > 0) facts.push(['', 'heart', kidsNum + (kidsNum === 1 ? ' child' : ' children'), 'Small effect', 'Family size usually changes the estimate by a smaller margin than age or smoking.']);
+
+      var box = $('factors');
+      facts.forEach(function (f) {
+        var div = document.createElement('div'); div.className = 'fact ' + f[0];
+        div.innerHTML = '<div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[f[1]] + '</svg></div><div><b></b><p></p></div>';
+        var b = div.querySelector('b'); b.appendChild(document.createTextNode(f[2] + ' '));
+        var tag = document.createElement('span'); tag.className = 'tagline'; tag.textContent = f[3]; b.appendChild(tag);
+        div.querySelector('p').textContent = f[4];
+        box.appendChild(div);
+      });
+    })();
+  </script>
+</body>
+</html>
