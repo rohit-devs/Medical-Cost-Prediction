@@ -1,0 +1,29 @@
+name: Fork and star alert
+
+on:
+  fork:
+  watch:
+    types: [started]
+
+permissions:
+  issues: write
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open an alert issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT: ${{ github.event_name }}
+          ACTOR: ${{ github.event.sender.login }}
+          FORK_URL: ${{ github.event.forkee.html_url }}
+        run: |
+          if [ "$EVENT" = "fork" ]; then
+            TITLE="New fork by $ACTOR"
+            BODY="@rohit-devs $ACTOR forked this repo: $FORK_URL"
+          else
+            TITLE="New star from $ACTOR"
+            BODY="@rohit-devs $ACTOR starred this repo: https://github.com/$ACTOR"
+          fi
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY"
